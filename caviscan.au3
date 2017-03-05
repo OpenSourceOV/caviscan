@@ -14,15 +14,13 @@
 ; Config
 ; =============================================================
 Const $SCAN_INTERVAL_SEC = 600
-Const $OUTPUT_FILE_FORMAT = 'YYYY-MM-DD-0001+.jpg'
-Const $PREVIEW_RESOLUTION = 75
-Const $END_DATE_TIME = "2016/09/09 17:00:00" ; Important - when the scanning should stop. Format YYYY/mm/dd HH:mm:ss
+Const $END_DATE_TIME = "2017/03/01 17:00:00" ; Important - when the scanning should stop. Format YYYY/mm/dd HH:mm:ss
 Const $LOG_FILE = "C:\Data\scanner_1_log.log"
 Const $SCAN_MAX_TIME = 1200 ; maximum scan time before scan fail triggered, in seconds.
-Const $OUTPUT_FOLDER = "C:\Data\05092016_glob_j"
-Const $GREY_CHANNEL = "Auto" ; which channel to make grey from when using grey image type. Options: Blue, Green, Red, Auto
+Const $OUTPUT_FOLDER = "C:\Data\Sample_Name"
 Const $MODE_TRANSMISSION = 'Transparency'
 Const $MODE_REFLECTIVE = 'Flatbed'
+
 ; =============================================================
 
 #include "include.au3"
@@ -31,8 +29,8 @@ Const $MODE_REFLECTIVE = 'Flatbed'
 ; =============================================================
 Func preScan()
 	attachToMaximisedScanner()
-	setMode($MODE_TRANSMISSION)
-	;~ setMode($MODE_REFLECTIVE)
+	; setMode($MODE_TRANSMISSION)
+	; setMode($MODE_REFLECTIVE)
 EndFunc
 
 ; Commands to run once the scanning procedure has finished (leave empty in most cases)
@@ -46,13 +44,13 @@ Func scanningProcedure()
 
 	; Example:
 
-	;~ setSample('Leaf_1')
-	;~ selectRegion(32.147,50.123,0,52.187)
-	;~ scanAtResolution('2400', $IMAGE_TYPE_8_GREY, $FILE_TYPE_TIFF)
+	; setSample('Leaf_1')
+	; selectRegion(32.147,50.123,0,52.187)
+	; scanAtResolution('150', $IMAGE_TYPE_8_GREY, $FILE_TYPE_TIFF)
 
-	;~ setSample('Leaf_2')
-	;~ selectRegion(31.803,38.021,0.344,196.655)
-	;~ scanAtResolution('2400', $IMAGE_TYPE_8_GREY, $FILE_TYPE_TIFF)
+	; setSample('Leaf_2')
+	; selectRegion(31.803,38.021,0.344,196.655)
+	; scanAtResolution('2400', $IMAGE_TYPE_8_GREY, $FILE_TYPE_TIFF)
 
 EndFunc
 

@@ -23,6 +23,10 @@ Const $FILE_TYPE_TIFF = 1
 Const $FILE_TYPE_JPEG = 2
 
 ; Misc
+Const $GREY_CHANNEL = "Auto" ; which channel to make grey from when using grey image type. Options: Blue, Green, Red, Auto
+Const $PREVIEW_RESOLUTION = 75
+Const $OUTPUT_FILE_FORMAT = 'YYYY-MM-DD-0001+.jpg'
+
 Global $currentStatus, $currentMode, $currentScanner, $currentFolder, $currentSample, $currentImageType, $currentFileType
 Global $finished = False
 
