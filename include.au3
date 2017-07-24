@@ -34,6 +34,7 @@ Global $finished = False
 Global $btnPreview, $btnScan
 Global $comboCropSize, $comboResolutions, $comboPreviewResolutions, $comboImageTypes, $comboMode, $comboColorBalance, $comboExternalViewer
 Global $comboTiffFileType, $comboTiffCompression
+Global $comboInfraredClean
 Global $comboGreyChannel
 Global $statusBar
 Global $tabPreviewScan, $tabOptions
@@ -141,36 +142,37 @@ Func setCurrentScanner($scannerInstance)
 	setInstanceIDs()
 
 	; Assign Controls
-	$btnPreview 				= ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:1]")
-	$btnScan 					= ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:2]")
-	$comboResolutions 			= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:64]")
+	$btnPreview 				      = ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:1]")
+	$btnScan 					        = ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:2]")
+	$comboResolutions 			  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:64]")
 	$comboPreviewResolutions 	= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:63]")
-	$comboImageTypes 			= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:60]")
-	$comboMode 					= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:57]")
-	$comboColorBalance			= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:19]")
-	$comboExternalViewer		= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:81]")
-	$comboCropSize				= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:48]")
-	$comboTiffFileType			= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:5]")
-	$comboTiffCompression		= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:6]")
-	$comboGreyChannel			= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:61]")
+	$comboImageTypes 			    = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:60]")
+	$comboMode 					      = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:57]")
+	$comboColorBalance			  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:19]")
+	$comboExternalViewer		  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:82]")
+	$comboCropSize				    = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:48]")
+	$comboTiffFileType			  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:5]")
+	$comboTiffCompression		  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:6]")
+	$comboGreyChannel			    = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:61]")
+	$comboInfraredClean			  = ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:46]")
 
-	$statusBar 					= ControlGetHandle($vueScan, "", "[CLASS:msctls_statusbar32; INSTANCE:1]")
+	$statusBar 					      = ControlGetHandle($vueScan, "", "[CLASS:msctls_statusbar32; INSTANCE:1]")
 
-	$tabPreviewScan 			= ControlGetHandle($vueScan, "", "[CLASS:_wx_SysTabCtl32; INSTANCE:2]")
-	$tabOptions 				= ControlGetHandle($vueScan, "", "[CLASS:_wx_SysTabCtl32; INSTANCE:1]")
+	$tabPreviewScan 			    = ControlGetHandle($vueScan, "", "[CLASS:_wx_SysTabCtl32; INSTANCE:2]")
+	$tabOptions 				      = ControlGetHandle($vueScan, "", "[CLASS:_wx_SysTabCtl32; INSTANCE:1]")
 
-	$radioJpeg 					= ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:23]")
-	$radioPDF 					= ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:29]")
-	$radioTIFF 					= ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:17]")
+	$radioJpeg 					      = ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:24]")
+	$radioPDF 					      = ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:30]")
+	$radioTIFF 					      = ControlGetHandle($vueScan, "", "[CLASS:Button; INSTANCE:18]")
 
-	$editJpegQuality 			= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:84]")
-	$editDefaultFolder 			= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:96]")
-	$editFileFormat 			= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:98]")
+	$editJpegQuality 			    = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:84]")
+	$editDefaultFolder 			  = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:96]")
+	$editFileFormat 			    = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:98]")
 
-	$editXSize 					= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:58]")
-	$editYSize 					= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:59]")
-	$editXOffset				= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:60]")
-	$editYOffset				= ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:61]")
+	$editXSize 					      = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:58]")
+	$editYSize 					      = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:59]")
+	$editXOffset				      = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:60]")
+	$editYOffset				      = ControlGetHandle($vueScan, "", "[CLASS:Edit; INSTANCE:61]")
 
 
 EndFunc
@@ -256,8 +258,14 @@ Func findScanners()
 EndFunc
 
 Func setMode($mode)
-    ControlCommand($vueScan, "", $comboMode, "SelectString", $mode)
-    Sleep(5 * 1000)
+  ControlCommand($vueScan, "", $comboMode, "SelectString", $mode)
+  Sleep(5 * 1000)
+
+	; Turn off infrared cleaning on transmission mode
+	If $mode = $MODE_TRANSMISSION Then
+		$comboInfraredClean	= ControlGetHandle($vueScan, "", "[CLASS:ComboBox; INSTANCE:46]")
+		ControlCommand($vueScan, "", $comboInfraredClean, "SelectString", 'None' )
+  EndIf
 
 	; Set the preview resolution
 	ControlCommand($vueScan, "", $comboPreviewResolutions, "SelectString", $PREVIEW_RESOLUTION & ' dpi')
